@@ -112,7 +112,8 @@ class ElementController extends Controller
 					*/
 					$transaction->commit();
 					Yii::app()->user->setFlash($messageType, $message);
-					$this->redirect(array('view','id'=>$model->id));
+					//$this->redirect(array('view','id'=>$model->id));
+                                        $this->redirect(array('create'));
 				}				
 			}
 			catch (Exception $e){
