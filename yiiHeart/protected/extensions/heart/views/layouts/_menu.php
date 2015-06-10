@@ -1,9 +1,10 @@
 <?php
-$currController         = Yii::app()->controller->id;
-$currControllers        = explode('/', $currController);
-$currAction             = Yii::app()->controller->action->id;
-$currRoute              = Yii::app()->controller->getRoute();
-$currRoutes             = explode('/', $currRoute);
+
+$currController = Yii::app()->controller->id;
+$currControllers = explode('/', $currController);
+$currAction = Yii::app()->controller->action->id;
+$currRoute = Yii::app()->controller->getRoute();
+$currRoutes = explode('/', $currRoute);
 
 $menu = array(
     array('label' => 'Home',
@@ -19,7 +20,7 @@ $menu = array(
                 'icon' => 'fa fa-refresh fa-fw',
                 'visible' => !Yii::app()->user->isGuest),
         //'---',
-        //array('label'=>'NAV HEADER'),
+//array('label'=>'NAV HEADER'),
         )),
     array('label' => 'Pages',
         'url' => '#',
@@ -27,15 +28,34 @@ $menu = array(
         'active' => ($currController == 'site' and $currAction != 'index'),
         'items' => array(
             array('label' => 'About',
-                'url' => array('/site/page','view' => 'about'),
+                'url' => array('/site/page', 'view' => 'about'),
                 'icon' => 'fa fa-info',
                 'active' => ($currController == 'site' and $currAction == 'page' )),
-            array('label' => 'Contact',                
+            array('label' => 'Contact',
                 'url' => array('/site/contact'),
                 'icon' => 'fa fa-envelope',
                 'active' => ($currController == 'site' and $currAction == 'contact' )),
         //'---',
-        //array('label'=>'NAV HEADER'),
+//array('label'=>'NAV HEADER'),
         )),
-);
+    array('label' => 'Проект',
+        'url' => '#',
+        'icon' => 'fa fa-sitemap',
+        'items' => array(
+            array('label' => 'template',
+                'url' => array('/template'),
+                'icon' => 'fa fa-info'),
+            array('label' => 'analiz',
+                'url' => array('/analiz'),
+                'icon' => 'fa fa-info'),
+            array('label' => 'element',
+                'url' => array('/element'),
+                'icon' => 'fa fa-info',),
+            array('label' => 'has_element',
+                'url' => array('/haselement'),
+                'icon' => 'fa fa-info'),
+            array('label' => 'template_has',
+                'url' => array('/templatehas'),
+                'icon' => 'fa fa-info')
+        )),)
 ?>	
