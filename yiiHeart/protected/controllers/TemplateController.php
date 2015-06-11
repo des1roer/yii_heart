@@ -97,7 +97,7 @@ class TemplateController extends Controller
                     {
                         $command = Yii::app()->db->createCommand();
                         $max = Yii::app()->db->createCommand()
-                                ->select('COALESCE ((max(id) + 1), 1) as max')
+                                ->select('COALESCE ((max(id)), 1) as max')
                                 ->from('template')
                                 ->queryScalar();
 
@@ -191,6 +191,22 @@ class TemplateController extends Controller
 
                 if ($model->save())
                 {
+                    if (isset($_POST['im_id2']))
+                    {
+                        $command = Yii::app()->db->createCommand();
+                        $command->delete('template_has_element', 'template_id=:id', array(':id' => $model->id));
+                        foreach($_POST['im_id2'] as $check)
+                        {
+                            $Ids = $_POST['im_id2'];
+                        };
+                        for($i = 0; $i < count($Ids); $i++)
+                        {
+                            $command->insert('template_has_element', array(
+                                'template_id' => $model->id, ////
+                                'element_id' => (int) $Ids[$i], ////
+                            ));
+                        }
+                    };
                     $transaction->commit();
                     Yii::app()->user->setFlash($messageType, $message);
                     $this->redirect(array('view', 'id' => $model->id));

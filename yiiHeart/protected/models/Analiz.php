@@ -30,7 +30,7 @@ class Analiz extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, template_id', 'required'),
+			array('template_id', 'required'),
 			array('id, template_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>45),
 			/*
