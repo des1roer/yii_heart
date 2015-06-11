@@ -176,25 +176,25 @@ if (isset($_POST['elem']))
                 $model->attributes = $_POST['Analiz'];
                 $messageType = 'success';
                 $message = "<strong>Well done!</strong> You successfully update data ";
-           if (isset($_POST['elem']))
-                    {
-                        $command = Yii::app()->db->createCommand();
-                        $command->delete('analiz_has_element', 'analiz_id=:id', array(':id' => $model->id));
-                        $Ids = $_POST['elem'];
-                        //echo '<pre>';
-                        $cnt = max(array_keys($Ids));
-                        $min = min(array_keys($Ids));
-                        for($i = $min; $i <= $cnt; $i++)
-                        {
-                            $val = $Ids[$i]['val'];
-                            if (isset($val) && !empty($val))
-                                $command->insert('analiz_has_element', array(
-                                    'analiz_id' => $model->id, ////
-                                    'value' => $val,
-                                    'element_id' => $i
-                                ));
-                        }
-                    };
+if (isset($_POST['elem']))
+ {
+     $command = Yii::app()->db->createCommand();
+     $command->delete('analiz_has_element', 'analiz_id=:id', array(':id' => $model->id));
+     $Ids = $_POST['elem'];
+     //echo '<pre>';
+     $cnt = max(array_keys($Ids));
+     $min = min(array_keys($Ids));
+     for($i = $min; $i <= $cnt; $i++)
+     {
+         $val = $Ids[$i]['val'];
+         if (isset($val) && !empty($val))
+             $command->insert('analiz_has_element', array(
+                 'analiz_id' => $model->id, ////
+                 'value' => $val,
+                 'element_id' => $i
+             ));
+     }
+ };
                 /*
                   $uploadFile=CUploadedFile::getInstance($model,'filename');
                   if(!empty($uploadFile)) {

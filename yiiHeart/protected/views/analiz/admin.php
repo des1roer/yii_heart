@@ -68,18 +68,23 @@ $('.search-form form').submit(function(){
 </div><!-- search-form -->
 
 <?php echo CHtml::beginForm(array('export')); ?>
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
-	'id'=>'analiz-grid',
-	'dataProvider'=>$model->search(),
-	'filter'=>$model,
-	'type' => 'striped hover', //bordered condensed
-	'columns'=>array(
-		array('header'=>'No','value'=>'($this->grid->dataProvider->pagination->currentPage*
+<?php
+function num($analiz_id, $elem_id)
+{
+        $num = Yii::app()->db->createCommand()
+            ->select('value')
+            ->from('analiz_has_element')
+            ->where("analiz_id=$analiz_id"
+                    . " and element_id = $elem_id")
+            ->queryScalar();
+        return (isset($num)) ? $num : '';
+}
+$myarray[] = array('header'=>'No','value'=>'($this->grid->dataProvider->pagination->currentPage*
 					 $this->grid->dataProvider->pagination->pageSize
 					)+ ($row+1)',
 				'htmlOptions' => array('style' =>'width: 25px; text-align:center;'),
-		),
-			array(
+		);
+$myarray[] = 			array(
 		   //     'header' => 'Name',
 		        'name'=> 'name',
 		        'type'=>'raw',
@@ -91,50 +96,60 @@ $('.search-form form').submit(function(){
 					'url'     => $this->createUrl('editable'),
 					'params' => array('YII_CSRF_TOKEN' => Yii::app()->request->csrfToken),
 				)
-		    ),
-			
-			array(
-		   //     'header' => 'Template_id',
-		        'name'=> 'template_id',
-		        'type'=>'raw',
-		        'value' => '($data->template_id)',
-		        'class' => 'bootstrap.widgets.TbEditableColumn',
-	            'headerHtmlOptions' => array('style' => 'text-align:center'),
-				'editable' => array(
-					'type'    => 'textarea',
-					'url'     => $this->createUrl('editable'),
-					'params' => array('YII_CSRF_TOKEN' => Yii::app()->request->csrfToken),
-				)
-		    ),
-			
-		/*
-		//Contoh
-		array(
-	        'header' => 'Level',
-	        'name'=> 'ref_level_id',
-	        'type'=>'raw',
-	        'value' => '($data->Level->name)',
-	        // 'value' => '($data->status)?"on":"off"',
-	    ),
-	    */
-	    array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
-			'buttons'=>array
+		);
+
+$template = 11;
+//находим все элементы из шаблона 
+$connection = Yii::app()->db;
+$sql = "
+        SELECT te.`element_id`,
+               el.name
+        FROM `template_has_element` `te`,
+             `element` el
+        WHERE el.id= te.`element_id`
+          AND te.`template_id`=$template
+                            ";
+$dataReader = $connection->createCommand($sql)->query();
+$rows = $dataReader->readAll();
+
+
+/* -----------------Данные для таблицы------------------------------------------- */
+
+  for($i = 0, $cnt = count($rows); $i < $cnt; $i++) //формируем столбцы
+  {
+  $id = $rows[$i]['element_id'];
+  $myarray[] = array(
+  'header' =>  $rows[$i]['name'], 
+  'id' => $id,
+  'value' => 'num($data->id,'.$id.')',
+  'htmlOptions' => array('style' => 'width: 15px; text-align:center;'),
+  'headerHtmlOptions' => array('style' => 'text-align:center'),
+  );
+  }
+
+$myarray[] = array(
+    'class' => 'bootstrap.widgets.TbButtonColumn',
+    'buttons' => array
+        (
+        'view' => array
             (
-                'view' => array
-                (    
-                	'url' => '$data->id."|".$data->name',              
-                	'click' => 'function(){
+            'url' => '$data->id."|".$data->name',
+            'click' => 'function(){
                 		data=$(this).attr("href").split("|")
                 		$("#myModalHeader").html(data[1]);
-	        			$("#myModalBody").load("'.$this->createUrl('view').'&id="+data[0]+"&asModal=true");
+	        			$("#myModalBody").load("' . $this->createUrl('view') . '&id="+data[0]+"&asModal=true");
                 		$("#myModal").modal();
                 		return false;
-                	}', 
-                ),
-            )
-		),
-	),
+                	}',
+        ),
+    )
+);
+$this->widget('bootstrap.widgets.TbGridView',array(
+	'id'=>'analiz-grid',
+	'dataProvider'=>$model->search(),
+	'filter'=>$model,
+	'type' => 'striped hover', //bordered condensed
+	'columns'=>$myarray, 
 )); ?>
 
 <select name="fileType" style="width:150px;">
